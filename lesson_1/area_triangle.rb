@@ -10,5 +10,5 @@ puts 'Укажите высоту треугольника'
 height = gets.chomp.to_i
 
 
-area_triangle = 1.0 / 2 * base * height
+area_triangle = 1.0/2 * base * height
 puts "Площадь треугольника #{area_triangle}"
