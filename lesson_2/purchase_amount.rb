@@ -11,7 +11,7 @@
 puts 'Введите даные или "стоп" в названии товара, что бы остановить ввод.'
 
 counter = 0
-goods = Hash.new
+goods = {}
 
 loop do
   counter += 1
