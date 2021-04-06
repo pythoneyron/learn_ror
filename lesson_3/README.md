@@ -58,9 +58,9 @@ route_c = Route.new(station_d, station_e)
 - **add_carriage** - Добавить вагон
 - **remove_carriage** - Убрать вагон
 - **set_route** - Установить маршрут
-- **git_index_route** - Получить индекс текуще маршрута
-- **get_next_station** - Получить следующую станцию
-- **get_previons_station** - Получить предыдущую станцию
+- **index_route** - Получить индекс текуще маршрута
+- **next_station** - Получить следующую станцию
+- **previons_station** - Получить предыдущую станцию
 - **moving_next_station** - Движение поезда на следующую станцию
 - **moving_previons_station** - Движение поезда на предыдущую станцию
 

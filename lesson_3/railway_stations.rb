@@ -107,53 +107,47 @@ class Train
     @current_station = @route.full_route[0]
   end
   
-  def git_index_route
+  def index_route
     route = @route.full_route
     index_route = route.find_index(@current_station)
   end
 
-  def get_next_station
-    index_route = git_index_route
+  def next_station
+    index_route = index_route
 
-    if index_route <= route.length - 2
-      route[index_route + 1]
-    end
+    route[index_route + 1] if index_route <= route.length - 2
   end
 
-  def get_previon_station
-    index_route = git_index_route
+  def previon_station
+    index_route = index_route
     
-    unless index_route.zero?
-      route[index_route -= 1]
-    end
+    route[index_route -= 1] unless index_route.zero?
   end
 
   def moving_next_station
-    next_station = get_next_station
+    next_station = next_station
 
-    if next_station
-      @current_station.delete_train(self)
-      next_station.receive_trains(self)
-      @current_station = next_station
+    return "Станция #{@current_station.name} конечная. Движение невозможно!" unless next_station
 
-      return "Поезд с номером #{self.number} прибыл на станцию #{@current_station.name}"
-    end
+    @current_station.delete_train(self)
+    next_station.receive_trains(self)
+    @current_station = next_station
 
-    "Станция #{@current_station.name} конечная. Движение невозможно!"
+    return "Поезд с номером #{self.number} прибыл на станцию #{@current_station.name}"
+    
   end
 
   def moving_previons_station
-    previons_station = get_previon_station
+    previons_station = previon_station
 
-    if previons_station
-      @current_station.delete_train(self)
-      previons_station.receive_trains(self)
-      @current_station = previons_station
+    return "Станция #{@current_station.name} начальная. Движение невозможно!" unless previons_station
 
-      return "Поезд с номером #{self.number} прибыл на станцию #{@current_station.name}"
-    end
+    @current_station.delete_train(self)
+    previons_station.receive_trains(self)
+    @current_station = previons_station
 
-    "Станция #{@current_station.name} начальная. Движение невозможно!"
+    return "Поезд с номером #{self.number} прибыл на станцию #{@current_station.name}"
+
   end
 end
 
