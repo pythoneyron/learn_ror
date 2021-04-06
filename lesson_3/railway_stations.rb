@@ -10,33 +10,24 @@ class Station
     @trains << train
   end
 
-  def show_trains_by_type
-    types_trains = {}
+  def show_trains_by_type(type)
+    trains.filter { |train| train.type == type }
+  end
 
-    for train in trains
-      if types_trains.key?(train.type)
-        types_trains[train.type] += 1
-      else
-        types_trains[train.type] = 1
-      end
-    end
-    
-    types_trains.each { |key, value| puts "Тип #{key} количество: #{value}" }
+  def delete_train(train)
+    @trains.delete(train)
   end
 
   def send_train(train)
     return "На станции #{self.name} нет поезда с номером #{train.number}" unless @trains.include?(train)
 
-    @trains.delete(train)
+    delete_train(train)
 
     puts "Поезд #{train.number} отправлен со станции #{self.name}"
 
     train.next_station
   end
 
-  def show_number_trains
-    trains.map { |train| train.number }
-  end
 end
 
 
@@ -71,9 +62,6 @@ class Route
     "Станция #{station.name} не является промежуточной, потому не может быть удалена."
   end
 
-  def show_stations
-    full_route.each { |station| puts station.name }
-  end
 end
 
 
@@ -119,13 +107,34 @@ class Train
     @current_station = @route.full_route[0]
   end
   
-  def next_station
+  def git_index_route
     route = @route.full_route
     index_route = route.find_index(@current_station)
-    
+  end
+
+  def get_next_station
+    index_route = git_index_route
+
     if index_route <= route.length - 2
-      @current_station = route[index_route + 1]
-      @current_station.receive_trains(self)
+      route[index_route + 1]
+    end
+  end
+
+  def get_previon_station
+    index_route = git_index_route
+    
+    unless index_route.zero?
+      route[index_route -= 1]
+    end
+  end
+
+  def moving_next_station
+    next_station = get_next_station
+
+    if next_station
+      @current_station.delete_train(self)
+      next_station.receive_trains(self)
+      @current_station = next_station
 
       return "Поезд с номером #{self.number} прибыл на станцию #{@current_station.name}"
     end
@@ -133,35 +142,18 @@ class Train
     "Станция #{@current_station.name} конечная. Движение невозможно!"
   end
 
-  def previons_station
-    route = @route.full_route
-    index_route = route.find_index(@current_station)
-    
-    unless index_route.zero?
-      @current_station = route[index_route -= 1]
-      @current_station.receive_trains(self)
+  def moving_previons_station
+    previons_station = get_previon_station
+
+    if previons_station
+      @current_station.delete_train(self)
+      previons_station.receive_trains(self)
+      @current_station = previons_station
 
       return "Поезд с номером #{self.number} прибыл на станцию #{@current_station.name}"
     end
 
     "Станция #{@current_station.name} начальная. Движение невозможно!"
-  end
-
-  def show_stations
-    @route.full_route.map { |station| station.name }
-  end
-
-  def show_previons_current_next_station
-    full_route = @route.full_route
-    current_index = full_route.find_index(@current_station)
-    
-    if  current_index == 0 && full_route.length >= 2
-      return "Предыдущей станции нет. Текущая станция: '#{current_station.name}' начальная. Cледующая станция '#{full_route[current_index + 1].name}'"
-    elsif current_index == full_route.length - 1  && full_route.length >= 2
-      return "Предыдущая станция '#{full_route[current_index - 1].name}' Текущая станция: '#{current_station.name}' конечная. Следующей станции нет, "
-    end
-
-    "Предыдущая станция: '#{full_route[current_index - 1].name}' Текущая станция: '#{current_station.name}' Следующая станция: '#{full_route[current_index + 1].name}'"
   end
 end
 
@@ -194,9 +186,3 @@ train_a.set_route(route_a)
 train_b.set_route(route_a)
 train_c.set_route(route_a)
 train_d.set_route(route_a)
-train_e.set_route(route_b)
-
-train_a.show_previons_current_next_station
-train_a.show_stations
-train_a.next_station
-train_a.show_previons_current_next_station
