@@ -1,4 +1,7 @@
 class Train
+  MOVEMENT_NEXT = 'next'.freeze
+  MOVEMENT_PREVIOUS = 'previous'.freeze
+
   attr_accessor :speed, :current_station
 
   attr_reader :carriages, :number, :type, :route
@@ -21,7 +24,7 @@ class Train
 
     @carriages << carriage
 
-    "Вагон #{carriage.name}' к поезду '#{self.number}' подцеплен"
+    "Вагон '#{carriage.name}' к поезду '#{self.number}' подцеплен"
   end
 
   def remove_carriage(carriage)
@@ -43,36 +46,26 @@ class Train
 
   def next_station
     full_route, current_index = full_route_with_index
-    
     full_route[current_index + 1] if current_index <= full_route.length - 2
   end
 
   def previous_station
     full_route, current_index = full_route_with_index
-
     full_route[current_index - 1] unless current_index == 0
   end
 
-  def moving_next_station
+  def movement_train_by_stations(movement)
     return "Поезду не назначен маршрут. Движение не возможно!" unless route
 
-    station = next_station
+    if movement == MOVEMENT_NEXT
+      station = next_station
+      movement_impossible = "Станция #{self.current_station.name} конечная. Движение невозможно!"
+    else
+      station = previous_station
+      movement_impossible = "Станция #{self.current_station.name} стартовая. Движение невозможно!"
+    end
 
-    return "Станция #{self.current_station.name} конечная. Движение невозможно!" unless station
-
-    self.current_station.delete_train(self)
-    station.receive_trains(self)
-    self.current_station = station
-
-    "Поезд с номером #{self.number} прибыл на станцию #{self.current_station.name}"
-  end
-
-  def moving_previous_station
-    return "Поезду не назначен маршрут. Движение не возможно!" unless route
-
-    station = previous_station
-
-    return "Станция #{self.current_station.name} конечная. Движение невозможно!" unless station
+    return movement_impossible unless station
 
     self.current_station.delete_train(self)
     station.receive_trains(self)

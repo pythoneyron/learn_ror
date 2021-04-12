@@ -20,7 +20,6 @@ class Route
 
     if station.trains.empty?
       @intermediate_stations.delete(station)
-
       return "Станция #{station.name} удалена"
     end
 

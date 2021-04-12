@@ -3,7 +3,6 @@ class TrainCargo < Train
 
   def initialize(number)
     super(number, TYPE_TRAIN)
-    
     @number = number
   end
 end
