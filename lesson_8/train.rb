@@ -32,6 +32,10 @@ class Train
     self.speed = 0
   end
 
+  def all_carriages_in_train(&block)
+    self.carriages.each { |carriage| block.call(carriage) }
+  end
+
   def add_carriage(carriage)
     return 'Несоответствие типа поезда и вагона, вагон не добавлен' if type != carriage.type
     return 'Что бы прицепить вагон, необходимо остановить локоматив' unless speed.zero?

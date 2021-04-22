@@ -1,7 +1,7 @@
 class CarriagePassenger < Carriage
   TYPE_CARRIAGE = 'passenger'.freeze
 
-  def initialize(name)
-    super(name, TYPE_CARRIAGE)
+  def initialize(name, seat)
+    super(name, seat, TYPE_CARRIAGE)
   end
 end

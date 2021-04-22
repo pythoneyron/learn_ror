@@ -1,5 +1,5 @@
 class Station
-  NAME_STATION_FORMAT = /^[а-я0-9]{2}$/i
+  NAME_STATION_FORMAT = /^[а-я0-9]{2,100}$/i
 
   attr_reader :trains, :name
 
@@ -25,6 +25,10 @@ class Station
     @trains << train
   end
 
+  def all_trains_in_station(&block)
+    self.trains.each { |train| block.call(train) }
+  end
+
   def show_trains_by_type(type)
     trains.filter { |train| train.type == type }
   end
@@ -46,6 +50,6 @@ class Station
 
   def validate!
     raise 'Название станции не может быть пустым значением!' if name.empty?
-    raise 'Название станции должно содержать как минимум два символа!' if name !~ NAME_STATION_FORMAT
+    raise 'Название станции должно содержать как минимум два символа, число и/или кириллические буквы!' if name !~ NAME_STATION_FORMAT
   end
 end
