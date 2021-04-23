@@ -2,6 +2,9 @@ class Train
   MOVEMENT_NEXT = 'next'.freeze
   MOVEMENT_PREVIOUS = 'previous'.freeze
 
+  TYPE_PASSENGER = 'passenger'.freeze
+  TYPE_CARGO = 'cargo'.freeze
+
   NUMBER_FORMAT = /^[а-я0-9]{3}-?[а-я0-9]{2}$/i
 
   include NameCompany
@@ -33,7 +36,12 @@ class Train
   end
 
   def all_carriages_in_train(&block)
-    self.carriages.each { |carriage| block.call(carriage) }
+    carriages.each { |carriage| block.call(carriage) }
+  end
+
+  def type_train # для отображения в удобочитаемом виде
+    type_train_msg = { TYPE_CARGO => 'грузовой', TYPE_PASSENGER => 'пассажирский' }
+    type_train_msg[self.type]
   end
 
   def add_carriage(carriage)

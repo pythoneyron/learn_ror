@@ -1,6 +1,9 @@
 class Carriage
   NAME_CARRIAGE_FORMAT = /^[а-я0-9]{5,100}$/i
 
+  TYPE_PASSENGER = 'passenger'.freeze
+  TYPE_CARGO = 'cargo'.freeze
+
   include NameCompany
   include ValidateData
 
@@ -20,14 +23,24 @@ class Carriage
     size - used_size
   end
 
+  def type_carriage # для отображения в удобочитаемом виде
+    type_carriage_msg = { TYPE_CARGO => 'грузовой', TYPE_PASSENGER => 'пассажирский' }
+    type_carriage_msg[self.type]
+  end
+
+  def type_volume # для отображения в удобочитаемом виде
+    type_volume = { TYPE_CARGO => 'объема', TYPE_PASSENGER => 'места' }
+    type_volume[self.type]
+  end
+
   def use_volume(volume = 1) # Этот метод требуется только для текущего класса и его подклассов
     return 'Передано пустое значение, 0 или строка. Очидается число больше 0!' if volume == 0
-    return 'Свободного места или объема в вагоне нет!' if self.size == self.used_size
-    return "Переданное количество мест или объем займет больше, чем свободно! Доступно: #{self.size - self.used_size}" if (self.used_size + volume) > self.size
+    return "Свободного #{self.type_volume} в вагоне нет!" if self.size == self.used_size
+    return "Переданное количество #{self.type_volume} займет больше, чем свободно! Доступно: #{self.size - self.used_size}" if (self.used_size + volume) > self.size
 
     self.used_size += volume
 
-    "Место в вагоне в количестве '#{volume}' успешно занято. Осталось свободным: '#{self.size - self.used_size}'"
+    "Количество #{self.type_volume} '#{volume}' успешно занято. Осталось свободным: '#{self.size - self.used_size}'"
   end
 
   private

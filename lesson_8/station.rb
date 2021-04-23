@@ -26,7 +26,7 @@ class Station
   end
 
   def all_trains_in_station(&block)
-    self.trains.each { |train| block.call(train) }
+    trains.each { |train| block.call(train) }
   end
 
   def show_trains_by_type(type)

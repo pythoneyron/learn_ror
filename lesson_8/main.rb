@@ -59,9 +59,6 @@ class RailsRoad
   MOVEMENT_NEXT = 'next'.freeze
   MOVEMENT_PREVIOUS = 'previous'.freeze
 
-  # для отображения в удобочитаемом виде
-  @@type_carriage_train_message = { TYPE_CARGO => 'грузовой', TYPE_PASSENGER => 'пассажирский' }
-
   puts "Это программа абстрактной модели железной дороги"
 
   def menu_items
@@ -78,7 +75,7 @@ class RailsRoad
     print "\nВыберите нужный вариант: "
   end
 
-  def start_program
+  def generate_test_data
     # Тестовые данные
     # <-------------->
     station_moscow = Station.new('Москва')
@@ -120,12 +117,16 @@ class RailsRoad
     train_pass.add_carriage(carriage_pass_reserved_seat)
 
     puts '<--- Начало отображения тестовых данных --->'
-    station_moscow.all_trains_in_station { |val| puts "Поезд #{val.number} тип: #{@@type_carriage_train_message[val.type]}" } # Передаем блок в фунцией отображения в нужном формате
+    station_moscow.all_trains_in_station { |train| puts "Поезд #{train.number} тип: #{train.type_train}" } # Передаем блок в фунцией отображения в нужном формате
     puts ''
-    train_cargo.all_carriages_in_train { |val| puts "Вагон #{val.name} тип: #{@@type_carriage_train_message[val.type]}" } # Передаем блок в фунцией отображения в нужном формате
+    train_cargo.all_carriages_in_train { |carriage| puts "Вагон #{carriage.name} тип: #{carriage.type_carriage}" } # Передаем блок в фунцией отображения в нужном формате
     puts ''
-    train_pass.all_carriages_in_train { |val| puts "Вагон #{val.name} тип: #{@@type_carriage_train_message[val.type]}" } # Передаем блок в фунцией отображения в нужном формате
+    train_pass.all_carriages_in_train { |carriage| puts "Вагон #{carriage.name} тип: #{carriage.type_carriage}" } # Передаем блок в фунцией отображения в нужном формате
     puts '<--- Конец отображения тестовых данных --->'
+  end
+
+  def start_program
+    generate_test_data # Вызов метода для генерации тестовых данных
 
     loop do
       menu_items
@@ -224,6 +225,26 @@ class RailsRoad
 
         puts "\nГрузовой поезд с номером '#{train_cargo.number}' создан.\n" if train_cargo.valid?
       end
+    end
+  end
+
+  def show_carriages_in_train
+    loop do
+      puts "\nНиже выведен список ранее созданных поездов:"
+
+      display_trains(trains)
+
+      print "\nВыберите поезд или ведите 0 что бы выйти: "
+      train = gets.chomp.to_i
+      return if train.zero?
+
+      train = trains[train - 1]
+      carriages = train.carriages
+
+      puts "\nНиже выведен список вагонов для поезда #{train.number}:" unless carriages.empty?
+      puts "\nВагоны у поезда #{train.number} отсутствуют!:" if carriages.empty?
+
+      display_carriages(carriages)
     end
   end
 
@@ -560,7 +581,7 @@ class RailsRoad
       puts "\nНа станции '#{station.name}' поездов еще нет" if station.trains.empty?
 
       puts "\nПоезда на станции #{station.name}:"
-      station.trains.each { |train| puts "#{train.number} - тип #{@@type_carriage_train_message[train.type]} кол-во вагонов: #{train.carriages.length}" }
+      station.trains.each { |train| puts "#{train.number} - тип #{train.type_train} кол-во вагонов: #{train.carriages.length}" }
       puts "\n" # раздилитель между списками
 
     end
@@ -606,11 +627,11 @@ class RailsRoad
   end
 
   def display_trains(trains)
-    trains.each_with_index { |train, index| puts "#{index + 1} - #{train.number} тип: #{@@type_carriage_train_message[train.type]}" }
+    trains.each_with_index { |train, index| puts "#{index + 1} - #{train.number} тип: #{train.type_train}" }
   end
 
   def display_carriages(carriages)
-    carriages.each_with_index { |carriage, index| puts "#{index + 1} - #{carriage.name} тип: #{@@type_carriage_train_message[carriage.type]}" }
+    carriages.each_with_index { |carriage, index| puts "#{index + 1} - #{carriage.name} тип: #{carriage.type_carriage}" }
   end
 
   def display_list_carriages_and_get
