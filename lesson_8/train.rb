@@ -51,7 +51,7 @@ class Train
 
     @carriages << carriage
 
-    "Вагон '#{carriage.name}' к поезду '#{self.number}' подцеплен"
+    "Вагон '#{carriage.name}' к поезду '#{number}' подцеплен"
   end
 
   def remove_carriage(carriage)
@@ -61,7 +61,7 @@ class Train
 
     @carriages.delete(carriage)
 
-    "Вагон '#{carriage.name}' у поезда '#{self.number}' отцеплен"
+    "Вагон '#{carriage.name}' у поезда '#{number}' отцеплен"
   end
 
   def route=(route)
@@ -82,23 +82,23 @@ class Train
   end
 
   def movement_train_by_stations(movement)
-    return "Поезду не назначен маршрут. Движение не возможно!" unless route
+    rregister_instanceeturn "Поезду не назначен маршрут. Движение не возможно!" unless route
 
     if movement == MOVEMENT_NEXT
       station = next_station
-      movement_impossible = "Станция #{self.current_station.name} конечная. Движение невозможно!"
+      movement_impossible = "Станция #{current_station.name} конечная. Движение невозможно!"
     else
       station = previous_station
-      movement_impossible = "Станция #{self.current_station.name} стартовая. Движение невозможно!"
+      movement_impossible = "Станция #{current_station.name} стартовая. Движение невозможно!"
     end
 
     return movement_impossible unless station
 
-    self.current_station.delete_train(self)
+    current_station.delete_train(self)
     station.receive_trains(self)
     self.current_station = station
 
-    "Поезд с номером #{self.number} прибыл на станцию #{self.current_station.name}"
+    "Поезд с номером #{self.number} прибыл на станцию #{current_station.name}"
   end
 
   private

@@ -1,4 +1,4 @@
-class CarriageCargo < Carriage
+class CarriageCargo < Carriageregister_instance
   TYPE_CARRIAGE = 'cargo'.freeze
 
   def initialize(name, volume)

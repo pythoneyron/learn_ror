@@ -10,7 +10,8 @@ class Route
     @stop = stop
     @intermediate_stations = []
     @@routers << self
-    self.register_instance
+
+    register_instance
   end
 
   def full_route

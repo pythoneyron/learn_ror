@@ -25,22 +25,22 @@ class Carriage
 
   def type_carriage # для отображения в удобочитаемом виде
     type_carriage_msg = { TYPE_CARGO => 'грузовой', TYPE_PASSENGER => 'пассажирский' }
-    type_carriage_msg[self.type]
+    type_carriage_msg[type]
   end
 
   def type_volume # для отображения в удобочитаемом виде
     type_volume = { TYPE_CARGO => 'объема', TYPE_PASSENGER => 'места' }
-    type_volume[self.type]
+    type_volume[type]
   end
 
   def use_volume(volume = 1) # Этот метод требуется только для текущего класса и его подклассов
     return 'Передано пустое значение, 0 или строка. Очидается число больше 0!' if volume == 0
-    return "Свободного #{self.type_volume} в вагоне нет!" if self.size == self.used_size
-    return "Переданное количество #{self.type_volume} займет больше, чем свободно! Доступно: #{self.size - self.used_size}" if (self.used_size + volume) > self.size
+    return "Свободного #{type_volume} в вагоне нет!" if size == used_size
+    return "Переданное количество #{type_volume} займет больше, чем свободно! Доступно: #{size - used_size}" if (used_size + volume) > size
 
     self.used_size += volume
 
-    "Количество #{self.type_volume} '#{volume}' успешно занято. Осталось свободным: '#{self.size - self.used_size}'"
+    "Количество #{type_volume} '#{volume}' успешно занято. Осталось свободным: '#{size - used_size}'"
   end
 
   private

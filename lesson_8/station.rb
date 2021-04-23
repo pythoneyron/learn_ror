@@ -16,7 +16,7 @@ class Station
     @name = name 
     @trains = []
     @@stasions << self
-    self.register_instance
+    register_instance
 
     validate
   end
@@ -38,12 +38,12 @@ class Station
   end
 
   def send_train(train)
-    return "На станции #{self.name} нет поезда с номером #{train.number}" unless @trains.include?(train)
+    return "На станции #{name} нет поезда с номером #{train.number}" unless @trains.include?(train)
 
     delete_train(train)
     train.next_station
 
-    "Поезд #{train.number} отправлен со станции #{self.name}"
+    "Поезд #{train.number} отправлен со станции #{name}"
   end
 
   private

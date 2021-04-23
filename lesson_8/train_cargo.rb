@@ -4,6 +4,7 @@ class TrainCargo < Train
   def initialize(number)
     super(number, TYPE_TRAIN)
     @number = number
-    self.register_instance
+
+    register_instance
   end
 end
