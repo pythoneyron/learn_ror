@@ -1,13 +1,16 @@
+# frozen_string_literal: true
+
 module NameCompany
   def set_name_company(name)
     self.name = name
   end
 
   def show_name_company
-    self.name
+    name
   end
 
   protected
+
   attr_accessor :name
 end
 
@@ -31,6 +34,7 @@ module InstanceCounter
 
   module InstanceMethods
     protected
+
     def register_instance
       self.class.instances += 1
     end
@@ -47,16 +51,18 @@ module ValidateData
   end
 
   module InstanceMethods
-    def validate # Тут перехватываем исключение, отображаем ошибку
+    # Тут перехватываем исключение, отображаем ошибку
+    def validate
       validate!
-    rescue RuntimeError => event
-      puts event.message # Отображаем только сообщение пользователю
+    rescue RuntimeError => e
+      puts e.message # Отображаем только сообщение пользователю
     end
 
-    def valid? # Используется в файле main.rb. Если исключение, то сообщение об успешном создании объекта не отображается.
+    # Используется в файле main.rb. Если исключение, то сообщение об успешном создании объекта не отображается.
+    def valid?
       validate!
       true
-    rescue
+    rescue StandardError
       false
     end
   end

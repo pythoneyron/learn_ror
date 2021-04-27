@@ -1,22 +1,25 @@
+# frozen_string_literal: true
+
 class Train
-  MOVEMENT_NEXT = 'next'.freeze
-  MOVEMENT_PREVIOUS = 'previous'.freeze
-
-  TYPE_PASSENGER = 'passenger'.freeze
-  TYPE_CARGO = 'cargo'.freeze
-
-  NUMBER_FORMAT = /^[а-я0-9]{3}-?[а-я0-9]{2}$/i
-
   include NameCompany
   include InstanceCounter
   include ValidateData
+
+  MOVEMENT_NEXT = 'next'
+  MOVEMENT_PREVIOUS = 'previous'
+
+  TYPE_PASSENGER = 'passenger'
+  TYPE_CARGO = 'cargo'
+
+  NUMBER_FORMAT = /^[а-я0-9]{3}-?[а-я0-9]{2}$/i.freeze
 
   attr_accessor :speed, :current_station
   attr_reader :carriages, :number, :type, :route
 
   @@trains = [] # Доступно для всех подклассов.
 
-  def self.find(num) # Фильтруем по всем экземплярам
+  # Фильтруем по всем экземплярам
+  def self.find(num)
     train = @@trains.filter { |train| train.number == num.to_s }
     train.empty? ? nil : train
   end
@@ -39,9 +42,10 @@ class Train
     carriages.each { |carriage| block.call(carriage) }
   end
 
-  def type_train # для отображения в удобочитаемом виде
+  # для отображения в удобочитаемом виде
+  def type_train
     type_train_msg = { TYPE_CARGO => 'грузовой', TYPE_PASSENGER => 'пассажирский' }
-    type_train_msg[self.type]
+    type_train_msg[type]
   end
 
   def add_carriage(carriage)
@@ -66,9 +70,9 @@ class Train
 
   def route=(route)
     @route = route
-    
+
     route.start.receive_trains(self)
-    self.current_station = route.start  
+    self.current_station = route.start
   end
 
   def next_station
@@ -78,11 +82,11 @@ class Train
 
   def previous_station
     full_route, current_index = full_route_with_index
-    full_route[current_index - 1] unless current_index == 0
+    full_route[current_index - 1] unless current_index.zero?
   end
 
   def movement_train_by_stations(movement)
-    rregister_instanceeturn "Поезду не назначен маршрут. Движение не возможно!" unless route
+    rregister_instanceeturn 'Поезду не назначен маршрут. Движение не возможно!' unless route
 
     if movement == MOVEMENT_NEXT
       station = next_station
@@ -98,12 +102,13 @@ class Train
     station.receive_trains(self)
     self.current_station = station
 
-    "Поезд с номером #{self.number} прибыл на станцию #{current_station.name}"
+    "Поезд с номером #{number} прибыл на станцию #{current_station.name}"
   end
 
   private
 
-  def full_route_with_index # Получение маршрута и текущего индекса, нужно только для методов текущего класса
+  # Получение маршрута и текущего индекса, нужно только для методов текущего класса
+  def full_route_with_index
     full_route = route.full_route
     current_index = full_route.find_index(current_station)
 
@@ -113,6 +118,8 @@ class Train
   def validate!
     raise 'Номер поезда не может быть пустым значением!' if number.empty?
     raise 'Тип поезда не может быть пустым значением!' if type.empty?
-    raise "Номер поезда должен соответствовать формату ХХХ-ХХ или ХХХХХ где 'Х' число и/или кириллические буквы" if number !~ NUMBER_FORMAT
+    if number !~ NUMBER_FORMAT
+      raise "Номер поезда должен соответствовать формату ХХХ-ХХ или ХХХХХ где 'Х' число и/или кириллические буквы"
+    end
   end
 end

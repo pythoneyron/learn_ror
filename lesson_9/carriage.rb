@@ -1,11 +1,13 @@
+# frozen_string_literal: true
+
 class Carriage
-  NAME_CARRIAGE_FORMAT = /^[а-я0-9]{5,100}$/i
-
-  TYPE_PASSENGER = 'passenger'.freeze
-  TYPE_CARGO = 'cargo'.freeze
-
   include NameCompany
   include ValidateData
+
+  TYPE_PASSENGER = 'passenger'
+  TYPE_CARGO = 'cargo'
+
+  NAME_CARRIAGE_FORMAT = /^[а-я0-9]{5,100}$/i.freeze
 
   attr_accessor :used_size
   attr_reader :type, :name, :size
@@ -23,20 +25,25 @@ class Carriage
     size - used_size
   end
 
-  def type_carriage # для отображения в удобочитаемом виде
+  # для отображения в удобочитаемом виде
+  def type_carriage
     type_carriage_msg = { TYPE_CARGO => 'грузовой', TYPE_PASSENGER => 'пассажирский' }
     type_carriage_msg[type]
   end
 
-  def type_volume # для отображения в удобочитаемом виде
+  # для отображения в удобочитаемом виде
+  def type_volume
     type_volume = { TYPE_CARGO => 'объема', TYPE_PASSENGER => 'места' }
     type_volume[type]
   end
 
-  def use_volume(volume = 1) # Этот метод требуется только для текущего класса и его подклассов
-    return 'Передано пустое значение, 0 или строка. Очидается число больше 0!' if volume == 0
+  # Этот метод требуется только для текущего класса и его подклассов
+  def use_volume(volume = 1)
+    return 'Передано пустое значение, 0 или строка. Очидается число больше 0!' if volume.zero?
     return "Свободного #{type_volume} в вагоне нет!" if size == used_size
-    return "Переданное количество #{type_volume} займет больше, чем свободно! Доступно: #{size - used_size}" if (used_size + volume) > size
+    if (used_size + volume) > size
+      return "Переданное количество #{type_volume} займет больше, чем свободно! Доступно: #{size - used_size}"
+    end
 
     self.used_size += volume
 
@@ -48,7 +55,13 @@ class Carriage
   def validate!
     raise 'Название вагона не может быть пустым значением!' if name.empty?
     raise 'Тип Вагона не может быть пустым значением!' if type.empty?
-    raise "Получена строка или пустое значение! Объем или место в вагоне не может быть пустым значением! Ожидается число больше 0!" if size.zero?
-    raise 'Название вагона должно содержать как минимум пять символов и может содержать число и/или кириллические буквы!' if name !~ NAME_CARRIAGE_FORMAT
+
+    if size.zero?
+      raise 'Получена строка или пустое значение! Объем или место в вагоне не может быть пустым значением! Ожидается число больше 0!'
+    end
+
+    if name !~ NAME_CARRIAGE_FORMAT
+      raise 'Название вагона должно содержать как минимум пять символов и может содержать число и/или кириллические буквы!'
+    end
   end
 end

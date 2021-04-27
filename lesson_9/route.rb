@@ -1,7 +1,9 @@
-class Route
-  attr_reader :start, :stop
+# frozen_string_literal: true
 
+class Route
   include InstanceCounter
+
+  attr_reader :start, :stop
 
   @@routers = []
 
@@ -23,7 +25,9 @@ class Route
   end
 
   def delete_intermediate_stations(station)
-    return "Станция #{station.name} не является промежуточной, потому не может быть удалена." unless @intermediate_stations.include?(station)
+    unless @intermediate_stations.include?(station)
+      return "Станция #{station.name} не является промежуточной, потому не может быть удалена."
+    end
 
     if station.trains.empty?
       @intermediate_stations.delete(station)

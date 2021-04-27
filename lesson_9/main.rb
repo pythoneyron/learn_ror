@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'modules'
 require_relative 'station'
 require_relative 'route'
@@ -29,8 +31,8 @@ class RailsRoad
   SHOW_STATIONS_AND_TRAINS_ON_STATION = 9
 
   # типы вагонов и поездов
-  TYPE_PASSENGER = 'passenger'.freeze
-  TYPE_CARGO = 'cargo'.freeze
+  TYPE_PASSENGER = 'passenger'
+  TYPE_CARGO = 'cargo'
 
   # для метода create_trains
   PASSENGER = 1
@@ -56,10 +58,10 @@ class RailsRoad
   MOVING_PREVIOUS = 2
 
   # для метода moving_train_on_route
-  MOVEMENT_NEXT = 'next'.freeze
-  MOVEMENT_PREVIOUS = 'previous'.freeze
+  MOVEMENT_NEXT = 'next'
+  MOVEMENT_PREVIOUS = 'previous'
 
-  puts "Это программа абстрактной модели железной дороги"
+  puts 'Это программа абстрактной модели железной дороги'
 
   def menu_items
     puts "\n1 - Создавать станции"
@@ -71,7 +73,7 @@ class RailsRoad
     puts '7 - Отцеплять вагоны от поезда'
     puts '8 - Перемещать поезд по маршруту вперед и назад'
     puts '9 - Просматривать список станций и список поездов на станции'
-    puts "0 - Выход"
+    puts '0 - Выход'
     print "\nВыберите нужный вариант: "
   end
 
@@ -79,8 +81,8 @@ class RailsRoad
     # Тестовые данные
     # <-------------->
     station_moscow = Station.new('Москва')
-    station_surgut = Station.new( 'Сургут')
-    station_tymen = Station.new( 'Тюмень')
+    station_surgut = Station.new('Сургут')
+    station_tymen = Station.new('Тюмень')
     @stations.push(station_moscow, station_surgut, station_tymen)
 
     route = Route.new(station_moscow, station_surgut)
@@ -94,9 +96,8 @@ class RailsRoad
     train_pass = TrainPassenger.new('222-22')
     @trains << train_pass
 
-
-    train_cargo.route=(route)
-    train_pass.route=(route)
+    train_cargo.route = (route)
+    train_pass.route = (route)
 
     carriage_cargo_platform = CarriageCargo.new('платформа', 100)
     @carriages << carriage_cargo_platform
@@ -117,11 +118,17 @@ class RailsRoad
     train_pass.add_carriage(carriage_pass_reserved_seat)
 
     puts '<--- Начало отображения тестовых данных --->'
-    station_moscow.all_trains_in_station { |train| puts "Поезд #{train.number} тип: #{train.type_train}" } # Передаем блок в фунцией отображения в нужном формате
+    station_moscow.all_trains_in_station do |train|
+      puts "Поезд #{train.number} тип: #{train.type_train}"
+    end
     puts ''
-    train_cargo.all_carriages_in_train { |carriage| puts "Вагон #{carriage.name} тип: #{carriage.type_carriage}" } # Передаем блок в фунцией отображения в нужном формате
+    train_cargo.all_carriages_in_train do |carriage|
+      puts "Вагон #{carriage.name} тип: #{carriage.type_carriage}"
+    end
     puts ''
-    train_pass.all_carriages_in_train { |carriage| puts "Вагон #{carriage.name} тип: #{carriage.type_carriage}" } # Передаем блок в фунцией отображения в нужном формате
+    train_pass.all_carriages_in_train do |carriage|
+      puts "Вагон #{carriage.name} тип: #{carriage.type_carriage}"
+    end
     puts '<--- Конец отображения тестовых данных --->'
   end
 
@@ -216,15 +223,15 @@ class RailsRoad
         puts "\nПассажирский поезд с номером '#{train_passenger.number}' создан.\n" if train_passenger.valid?
       end
 
-      if type == CARGO
-        print "Введите номер грузового поезда в формате ХХХ-ХХ '-' не обязательно: "
+      next unless type == CARGO
 
-        number = gets.chomp
-        train_cargo = TrainCargo.new(number)
-        @trains << train_cargo
+      print "Введите номер грузового поезда в формате ХХХ-ХХ '-' не обязательно: "
 
-        puts "\nГрузовой поезд с номером '#{train_cargo.number}' создан.\n" if train_cargo.valid?
-      end
+      number = gets.chomp
+      train_cargo = TrainCargo.new(number)
+      @trains << train_cargo
+
+      puts "\nГрузовой поезд с номером '#{train_cargo.number}' создан.\n" if train_cargo.valid?
     end
   end
 
@@ -287,25 +294,25 @@ class RailsRoad
         puts "\nПассажирский вагон '#{carriage_passenger.name}' создан.\n" if carriage_passenger.valid?
       end
 
-      if type == CARGO
-        print 'Введите название грузового вагона: '
-        name = gets.chomp
+      next unless type == CARGO
 
-        print 'Введите объем грузового вагона(число): '
-        volume = gets.chomp
+      print 'Введите название грузового вагона: '
+      name = gets.chomp
 
-        carriage_cargo = CarriageCargo.new(name, volume)
-        @carriages << carriage_cargo
+      print 'Введите объем грузового вагона(число): '
+      volume = gets.chomp
 
-        puts "\nГрузовой вагон '#{carriage_cargo.name}' создан.\n" if carriage_cargo.valid?
-      end
+      carriage_cargo = CarriageCargo.new(name, volume)
+      @carriages << carriage_cargo
+
+      puts "\nГрузовой вагон '#{carriage_cargo.name}' создан.\n" if carriage_cargo.valid?
     end
   end
 
   def use_volume_is_carriage
     loop do
       carriage = display_list_carriages_and_get
-      return if carriage == 0
+      return if !carriage && carriage.zero?
 
       if carriage.type == TYPE_CARGO
         puts "Свободно #{carriage.free_volume} из #{carriage.size}"
@@ -323,14 +330,16 @@ class RailsRoad
   def show_used_volume
     loop do
       carriage = display_list_carriages_and_get
-      return if carriage == 0
+      return if !carriage && carriage.zero?
 
       puts "Свободно #{carriage.free_volume} из #{carriage.size}"
     end
   end
 
   def create_routers
-    return puts "\nДля построения маршрута требуется как минимум две станции. Создайте станции в основном меню!" if stations.empty?
+    if stations.empty?
+      return puts "\nДля построения маршрута требуется как минимум две станции. Создайте станции в основном меню!"
+    end
 
     puts "\nНиже выведен список ранее созданных станций:"
 
@@ -350,14 +359,14 @@ class RailsRoad
 
     return puts 'Одна или две станции не выбраны. Маршрут не создан' if [first_station, last_station].include?(nil)
 
-    if first_station != last_station
-      route = Route.new(first_station, last_station)
-      @routers << route
-
-      puts "\nМаршрут со станциями '#{first_station.name}' и '#{last_station.name}' создан.\n"
-    else
+    unless first_station != last_station
       puts and return "\nВыбраны несуществующие пункты меню или выбраны одинаковые станции. Маршрут не создан!\n"
     end
+
+    route = Route.new(first_station, last_station)
+    @routers << route
+
+    puts "\nМаршрут со станциями '#{first_station.name}' и '#{last_station.name}' создан.\n"
 
     puts "\n1 - Добавить промежуточные станции"
     puts '0 - Выход'
@@ -373,7 +382,9 @@ class RailsRoad
 
   def manage_station
     loop do
-      return puts "\nДля управления станциями в маршруте необходимо создать маршрут. Создайте маршруты!" if routers.empty?
+      if routers.empty?
+        return puts "\nДля управления станциями в маршруте необходимо создать маршрут. Создайте маршруты!"
+      end
 
       puts "\nНиже выведен список ранее созданных маршрутов:"
 
@@ -447,6 +458,7 @@ class RailsRoad
 
   def set_route_to_train
     return puts "\nДля назначения поезду маршрута необходимо создать поезд. Создайте поезда!" if trains.empty?
+
     puts "\nНиже выведен список ранее созданных поездов:"
 
     display_trains(trains)
@@ -458,6 +470,7 @@ class RailsRoad
     train = trains[train - 1]
 
     return puts "\nДля назначения поезду маршрута необходимо создать маршрут. Создайте маршруты!" if routers.empty?
+
     puts "\nНиже выведен список ранее созданных маршрутов:"
 
     display_routers(routers)
@@ -468,12 +481,13 @@ class RailsRoad
 
     route = routers[route - 1]
 
-    train.route=(route)
+    train.route = (route)
     puts "\nПоезду #{train.number} назначен маршрут #{route.start.name} -> #{route.stop.name}"
   end
 
   def add_carriages_to_train
     return puts "\nДля добавления вагонов к поезду необходимо создать поезд. Создайте поезда!" if trains.empty?
+
     puts "\nНиже выведен список ранее созданных поездов:"
 
     display_trains(trains)
@@ -484,8 +498,10 @@ class RailsRoad
 
     train = trains[train - 1]
 
-    carriages_by_type = carriages.filter{ |carriage| carriage.type == train.type }
-    return puts "\nДля добавления вагонов к поезду необходимо создать вагоны. Создайте вагоны!" if carriages_by_type.empty?
+    carriages_by_type = carriages.filter { |carriage| carriage.type == train.type }
+    if carriages_by_type.empty?
+      return puts "\nДля добавления вагонов к поезду необходимо создать вагоны. Создайте вагоны!"
+    end
 
     loop do
       puts "\nНиже выведен список ранее созданных вагонов:"
@@ -507,6 +523,7 @@ class RailsRoad
 
   def remove_carriage_from_train
     return puts "\nДля удаления вагонов к поезда необходимо создать поезд. Создайте поезда!" if trains.empty?
+
     puts "\nНиже выведен список ранее созданных поездов:"
 
     display_trains(trains)
@@ -522,6 +539,7 @@ class RailsRoad
       carriages = train.carriages
 
       return puts "\nУ поезда отсутствуют вагоны" if carriages.empty?
+
       puts "\nНиже выведен список ранее созданных вагонов:"
 
       display_carriages(carriages)
@@ -540,6 +558,7 @@ class RailsRoad
 
   def moving_train_on_route
     return puts "\nДля перемещения поезда его необходимо создать. Создайте поезда!" if trains.empty?
+
     puts "\nНиже выведен список ранее созданных поездов:"
 
     display_trains(trains)
@@ -581,9 +600,10 @@ class RailsRoad
       puts "\nНа станции '#{station.name}' поездов еще нет" if station.trains.empty?
 
       puts "\nПоезда на станции #{station.name}:"
-      station.trains.each { |train| puts "#{train.number} - тип #{train.type_train} кол-во вагонов: #{train.carriages.length}" }
+      station.trains.each do |train|
+        puts "#{train.number} - тип #{train.type_train} кол-во вагонов: #{train.carriages.length}"
+      end
       puts "\n" # раздилитель между списками
-
     end
   end
 
@@ -631,7 +651,9 @@ class RailsRoad
   end
 
   def display_carriages(carriages)
-    carriages.each_with_index { |carriage, index| puts "#{index + 1} - #{carriage.name} тип: #{carriage.type_carriage}" }
+    carriages.each_with_index do |carriage, index|
+      puts "#{index + 1} - #{carriage.name} тип: #{carriage.type_carriage}"
+    end
   end
 
   def display_list_carriages_and_get

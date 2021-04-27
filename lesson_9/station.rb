@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 class Station
-  NAME_STATION_FORMAT = /^[а-я0-9]{2,100}$/i
-
-  attr_reader :trains, :name
-
   include InstanceCounter
   include ValidateData
+
+  NAME_STATION_FORMAT = /^[а-я0-9]{2,100}$/i.freeze
+
+  attr_reader :trains, :name
 
   @@stasions = []
 
@@ -13,7 +15,7 @@ class Station
   end
 
   def initialize(name)
-    @name = name 
+    @name = name
     @trains = []
     @@stasions << self
     register_instance
@@ -50,6 +52,8 @@ class Station
 
   def validate!
     raise 'Название станции не может быть пустым значением!' if name.empty?
-    raise 'Название станции должно содержать как минимум два символа, число и/или кириллические буквы!' if name !~ NAME_STATION_FORMAT
+    if name !~ NAME_STATION_FORMAT
+      raise 'Название станции должно содержать как минимум два символа, число и/или кириллические буквы!'
+    end
   end
 end

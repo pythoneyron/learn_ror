@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 class TrainPassenger < Train
-  TYPE_TRAIN = 'passenger'.freeze
+  TYPE_TRAIN = 'passenger'
 
   def initialize(number)
     super(number, TYPE_TRAIN)
