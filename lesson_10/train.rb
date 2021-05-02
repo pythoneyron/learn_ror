@@ -3,7 +3,8 @@
 class Train
   include NameCompany
   include InstanceCounter
-  include ValidateData
+  # include ValidateData
+  include Validation
 
   MOVEMENT_NEXT = 'next'
   MOVEMENT_PREVIOUS = 'previous'
@@ -15,6 +16,10 @@ class Train
 
   attr_accessor :speed, :current_station
   attr_reader :carriages, :number, :type, :route
+
+  validate :number, :presence
+  validate :number, :format, NUMBER_FORMAT
+  validate :type, :presence
 
   @@trains = [] # Доступно для всех подклассов.
 
@@ -31,7 +36,7 @@ class Train
     @speed = 0
     @@trains << self # Родительский initialize вызывается всегда, потому ставим это здесь, что бы добавлять все экземпляры
 
-    validate
+    validate!
   end
 
   def stop_train
@@ -115,11 +120,11 @@ class Train
     [full_route, current_index]
   end
 
-  def validate!
-    raise 'Номер поезда не может быть пустым значением!' if number.empty?
-    raise 'Тип поезда не может быть пустым значением!' if type.empty?
-    if number !~ NUMBER_FORMAT
-      raise "Номер поезда должен соответствовать формату ХХХ-ХХ или ХХХХХ где 'Х' число и/или кириллические буквы"
-    end
-  end
+  # def validate!
+  #   raise 'Номер поезда не может быть пустым значением!' if number.empty?
+  #   raise 'Тип поезда не может быть пустым значением!' if type.empty?
+  #   if number !~ NUMBER_FORMAT
+  #     raise "Номер поезда должен соответствовать формату ХХХ-ХХ или ХХХХХ где 'Х' число и/или кириллические буквы"
+  #   end
+  # end
 end

@@ -2,7 +2,8 @@
 
 class Carriage
   include NameCompany
-  include ValidateData
+  # include ValidateData
+  include Validation
 
   TYPE_PASSENGER = 'passenger'
   TYPE_CARGO = 'cargo'
@@ -12,13 +13,20 @@ class Carriage
   attr_accessor :used_size
   attr_reader :type, :name, :size
 
+  validate :name, :presence
+  validate :name, :format, NAME_CARRIAGE_FORMAT
+
+  validate :type, :presence
+
+  validate :size, :presence
+
   def initialize(name, size, type)
     @name = name
     @type = type
     @size = size.to_i
     @used_size = 0
 
-    validate
+    validate!
   end
 
   def free_volume
@@ -50,18 +58,18 @@ class Carriage
     "Количество #{type_volume} '#{volume}' успешно занято. Осталось свободным: '#{size - used_size}'"
   end
 
-  private
-
-  def validate!
-    raise 'Название вагона не может быть пустым значением!' if name.empty?
-    raise 'Тип Вагона не может быть пустым значением!' if type.empty?
-
-    if size.zero?
-      raise 'Получена строка или пустое значение! Объем или место в вагоне не может быть пустым значением! Ожидается число больше 0!'
-    end
-
-    if name !~ NAME_CARRIAGE_FORMAT
-      raise 'Название вагона должно содержать как минимум пять символов и может содержать число и/или кириллические буквы!'
-    end
-  end
+  # private
+  #
+  # def validate!
+  #   raise 'Название вагона не может быть пустым значением!' if name.empty?
+  #   raise 'Тип Вагона не может быть пустым значением!' if type.empty?
+  #
+  #   if size.zero?
+  #     raise 'Получена строка или пустое значение! Объем или место в вагоне не может быть пустым значением! Ожидается число больше 0!'
+  #   end
+  #
+  #   if name !~ NAME_CARRIAGE_FORMAT
+  #     raise 'Название вагона должно содержать как минимум пять символов и может содержать число и/или кириллические буквы!'
+  #   end
+  # end
 end

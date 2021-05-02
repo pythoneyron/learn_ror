@@ -2,11 +2,15 @@
 
 class Station
   include InstanceCounter
-  include ValidateData
+  # include ValidateData
+  include Validation
 
   NAME_STATION_FORMAT = /^[а-я0-9]{2,100}$/i.freeze
 
   attr_reader :trains, :name
+
+  validate :name, :presence
+  validate :name, :format, NAME_STATION_FORMAT
 
   @@stasions = []
 
@@ -20,7 +24,7 @@ class Station
     @@stasions << self
     register_instance
 
-    validate
+    validate!
   end
 
   def receive_trains(train)
@@ -48,12 +52,12 @@ class Station
     "Поезд #{train.number} отправлен со станции #{name}"
   end
 
-  private
+  # private
 
-  def validate!
-    raise 'Название станции не может быть пустым значением!' if name.empty?
-    if name !~ NAME_STATION_FORMAT
-      raise 'Название станции должно содержать как минимум два символа, число и/или кириллические буквы!'
-    end
-  end
+  # def validate!
+  #   raise 'Название станции не может быть пустым значением!' if name.empty?
+  #   if name !~ NAME_STATION_FORMAT
+  #     raise 'Название станции должно содержать как минимум два символа, число и/или кириллические буквы!'
+  #   end
+  # end
 end
