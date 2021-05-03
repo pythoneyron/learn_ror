@@ -91,7 +91,7 @@ class Train
   end
 
   def movement_train_by_stations(movement)
-    rregister_instanceeturn 'Поезду не назначен маршрут. Движение не возможно!' unless route
+    register_instance 'Поезду не назначен маршрут. Движение не возможно!' unless route
 
     if movement == MOVEMENT_NEXT
       station = next_station
